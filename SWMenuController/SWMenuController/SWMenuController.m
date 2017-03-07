@@ -65,7 +65,17 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
     
     [self.view addGestureRecognizer:_tapGesture];
 }
-    
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return [self.rootViewController preferredStatusBarStyle];
+}
+
+- (BOOL)prefersStatusBarHidden
+{
+    return [self.rootViewController prefersStatusBarHidden];
+}
+
 #pragma mark - Public
     
 - (instancetype)initWithRootViewController:(UIViewController* )rootViewController leftViewController:(UIViewController* )leftViewController rightViewController:(UIViewController* )rightViewController {
@@ -415,13 +425,13 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
     return CGRectContainsPoint(_rootViewController.view.frame, point);
 }
     
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-    if ([NSStringFromClass([touch.view class]) isEqualToString:@"UITableViewCellContentView"] && gestureRecognizer == _tapGesture) {
-        return NO;
-    }
-    
-    return  YES;
-}
+//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+//    if ([NSStringFromClass([touch.view class]) isEqualToString:@"UITableViewCellContentView"] && gestureRecognizer == _tapGesture) {
+//        return NO;
+//    }
+//    
+//    return  YES;
+//}
 
 @end
 
