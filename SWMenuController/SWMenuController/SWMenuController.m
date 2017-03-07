@@ -44,6 +44,10 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
     [self.view addSubview:_rightViewController.view];
     [self.view addSubview:_rootViewController.view];
     
+    _rootViewController.view.layer.shadowColor = [UIColor blackColor].CGColor;
+    _rootViewController.view.layer.shadowOpacity = 0.5f;
+    _rootViewController.view.layer.shadowRadius = 5;
+    
     //为MenuController添加滑动手势
     _panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
     _panGesture.enabled = _panEnable;
