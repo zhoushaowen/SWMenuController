@@ -40,15 +40,6 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
     
 #pragma mark - Overwrite
 
-- (instancetype)init
-{
-    self = [super init];
-    if(self){
-        _enableTapGesture = YES;
-    }
-    return self;
-}
-    
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.view addSubview:_leftViewController.view];
@@ -433,12 +424,8 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if(gestureRecognizer == _panGesture) return YES;
     if(gestureRecognizer == _tapGesture) {
-        if(_enableTapGesture){
-            CGPoint point = [gestureRecognizer locationInView:self.view];
-            return CGRectContainsPoint(_rootViewController.view.frame, point);
-        }else{
-            return NO;
-        }
+        CGPoint point = [gestureRecognizer locationInView:self.view];
+        return CGRectContainsPoint(_rootViewController.view.frame, point);
     }
     return YES;
 }
