@@ -192,21 +192,21 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
     return _panEnable;
 }
     
-- (void)showRootViewController:(BOOL)animated {
+- (void)showRootViewControllerAnimated:(BOOL)animated {
     _state = SWMenuControllerStateNormal;
     
-    [self moveRootViewWithState:_state end:0.0f scale:1.0f animated:YES];
+    [self moveRootViewWithState:_state end:0.0f scale:1.0f animated:animated];
 }
     
-- (void)showLeftViewController:(BOOL)animated {
+- (void)showLeftViewControllerAnimated:(BOOL)animated {
     if ([self canPanRight]) {
-        [self moveRootViewWithState:_state end:_maxRightOffset scale:1.0f animated:YES];
+        [self moveRootViewWithState:_state end:_maxRightOffset scale:1.0f animated:animated];
     }
 }
     
-- (void)showRightViewController:(BOOL)animated {
+- (void)showRightViewControllerAnimated:(BOOL)animated {
     if ([self canPanLeft]) {
-        [self moveRootViewWithState:_state end:-_maxLeftOffset scale:1.0f animated:YES];
+        [self moveRootViewWithState:_state end:-_maxLeftOffset scale:1.0f animated:animated];
     }
 }
     
@@ -413,7 +413,7 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
     
 - (void)tapGestureRecognizer:(UITapGestureRecognizer* )tapGesture {
     if (tapGesture.state == UIGestureRecognizerStateEnded) {
-        [self showRootViewController:YES];
+        [self showRootViewControllerAnimated:YES];
     }
 }
 

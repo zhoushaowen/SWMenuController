@@ -30,7 +30,7 @@
 {
     UIViewController *vc = [UIViewController new];
     vc.view.backgroundColor = [UIColor cyanColor];
-    [self.menuController showRootViewController:NO];
+    [self.menuController showRootViewControllerAnimated:NO];
     UINavigationController *nav = (UINavigationController *)self.menuController.rootViewController;
     [nav pushViewController:vc animated:YES];
 }

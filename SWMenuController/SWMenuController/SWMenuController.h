@@ -72,21 +72,21 @@ typedef NS_ENUM(NSUInteger, SWTransitionStyle) {
  *
  *  @param animated 是否使用动画
  */
-- (void)showRootViewController:(BOOL)animated;
+- (void)showRootViewControllerAnimated:(BOOL)animated;
     
 /**
  *  显示左边的页面
  *
  *  @param animated 是否使用动画
  */
-- (void)showLeftViewController:(BOOL)animated;
+- (void)showLeftViewControllerAnimated:(BOOL)animated;
     
 /**
  *  显示右边的页面
  *
  *  @param animated 是否使用动画
  */
-- (void)showRightViewController:(BOOL)animated;
+- (void)showRightViewControllerAnimated:(BOOL)animated;
     
 @end
 
