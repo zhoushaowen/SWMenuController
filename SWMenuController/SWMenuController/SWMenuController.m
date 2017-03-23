@@ -25,6 +25,8 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
     
     //滑动手势
     UIPanGestureRecognizer* _panGesture;
+    //点击手势
+    UITapGestureRecognizer *_tapGesture;
     
     //当前显示的是哪个页面状态
     SWMenuControllerState _state;
@@ -62,6 +64,7 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
     _tapGesture.enabled = NO;
     
     _tapGesture.delegate = self;
+    _enableTapGesture = YES;
     
     [self.view addGestureRecognizer:_tapGesture];
 }
@@ -420,9 +423,12 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
 #pragma mark - UIGestureRecognizerDelegate
     
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
-    CGPoint point = [gestureRecognizer locationInView:self.view];
+//    CGPoint point = [gestureRecognizer locationInView:self.view];
     
-    return CGRectContainsPoint(_rootViewController.view.frame, point);
+//    return CGRectContainsPoint(_rootViewController.view.frame, point);
+    if(gestureRecognizer == _panGesture) return YES;
+    if(gestureRecognizer == _tapGesture) return _enableTapGesture;
+    return YES;
 }
     
 //- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
