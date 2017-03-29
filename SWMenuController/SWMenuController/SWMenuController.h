@@ -22,6 +22,13 @@ typedef NS_ENUM(NSUInteger, SWTransitionStyle) {
     SWTransitionStyleQQ             = 3,//缩小主页面，放大侧边栏，像QQ一样
 };
 
+typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
+    SWMenuControllerStateNormal     = 0,//显示中间页面
+    SWMenuControllerStateLeft       = 1,//显示左边页面
+    SWMenuControllerStateRight      = 2,//显示右边页面
+};
+
+
 @interface SWMenuController : UIViewController
     
 //中间的页面
@@ -52,6 +59,9 @@ typedef NS_ENUM(NSUInteger, SWTransitionStyle) {
 @property (nonatomic, strong) changeRightView changeRightView;
 //设置中间的view随着移动距离改变的方法
 @property (nonatomic, strong) changeRootView changeRootView;
+
+//当前显示的是哪个页面状态
+@property (nonatomic,readonly) SWMenuControllerState state;
 
 /**
  *  创建一个ZYMenuController

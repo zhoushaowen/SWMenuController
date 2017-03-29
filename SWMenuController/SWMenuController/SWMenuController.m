@@ -7,12 +7,38 @@
 //
 
 #import "SWMenuController.h"
+#import <UIKit/UIGestureRecognizerSubclass.h>
 
-typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
-    SWMenuControllerStateNormal     = 0,//显示中间页面
-    SWMenuControllerStateLeft       = 1,//显示左边页面
-    SWMenuControllerStateRight      = 2,//显示右边页面
-};
+@interface SWPanGestureRecognizer : UIPanGestureRecognizer
+
+@property (nonatomic,strong,readonly) UIEvent *event;
+@property (nonatomic,readonly) CGPoint beginLocation;
+
+@end
+
+@interface SWPanGestureRecognizer ()
+
+@property (nonatomic,strong) UIEvent *event;
+@property (nonatomic) CGPoint beginLocation;
+
+@end
+
+@implementation SWPanGestureRecognizer
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    self.event = event;
+    self.beginLocation = [self locationInView:self.view];
+    [super touchesBegan:touches withEvent:event];
+}
+
+- (void)reset
+{
+    self.event = nil;
+    [super reset];
+}
+
+@end
 
 @interface SWMenuController () <UIGestureRecognizerDelegate> {
     //能否向左滑动
@@ -24,17 +50,17 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
     BOOL _panEnable;
     
     //滑动手势
-    UIPanGestureRecognizer* _panGesture;
+    SWPanGestureRecognizer* _panGesture;
     //点击手势
     UITapGestureRecognizer *_tapGesture;
     
-    //当前显示的是哪个页面状态
-    SWMenuControllerState _state;
-    
     CGPoint _startPanGesturePoint;
 }
+
+//当前显示的是哪个页面状态
+@property (nonatomic) SWMenuControllerState state;
     
-    @end
+@end
 
 @implementation SWMenuController
     
@@ -51,7 +77,7 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
     _rootViewController.view.layer.shadowRadius = 5;
     
     //为MenuController添加滑动手势
-    _panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
+    _panGesture = [[SWPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
     _panGesture.enabled = _panEnable;
     
     _panGesture.delegate = self;
@@ -437,6 +463,31 @@ typedef NS_ENUM(NSUInteger, SWMenuControllerState) {
 //    
 //    return  YES;
 //}
+
+//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+//{
+//    if(gestureRecognizer != _panGesture) return NO;
+//    if(gestureRecognizer.state != UIGestureRecognizerStateBegan) return NO;
+//    if(_panGesture.beginLocation.x < 30) {
+//        [self cancelOtherGestureRecognizer:otherGestureRecognizer];
+//        return YES;
+//    }
+////    if([otherGestureRecognizer.view isKindOfClass:[UIScrollView class]]){
+////        UIScrollView *scrollView = (UIScrollView *)otherGestureRecognizer.view;
+////        scrollView.bounces = YES;
+////        if(scrollView.contentOffset.x<=0){
+////            [self cancelOtherGestureRecognizer:otherGestureRecognizer];
+////            return YES;
+////        }
+////    }
+//    return NO;
+//}
+
+- (void)cancelOtherGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    NSSet *touchs = [_panGesture.event touchesForGestureRecognizer:otherGestureRecognizer];
+    [otherGestureRecognizer touchesCancelled:touchs withEvent:_panGesture.event];
+}
 
 @end
 
