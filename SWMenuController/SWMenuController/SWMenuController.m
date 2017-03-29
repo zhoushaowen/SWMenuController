@@ -9,36 +9,36 @@
 #import "SWMenuController.h"
 #import <UIKit/UIGestureRecognizerSubclass.h>
 
-@interface SWPanGestureRecognizer : UIPanGestureRecognizer
-
-@property (nonatomic,strong,readonly) UIEvent *event;
-@property (nonatomic,readonly) CGPoint beginLocation;
-
-@end
-
-@interface SWPanGestureRecognizer ()
-
-@property (nonatomic,strong) UIEvent *event;
-@property (nonatomic) CGPoint beginLocation;
-
-@end
-
-@implementation SWPanGestureRecognizer
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    self.event = event;
-    self.beginLocation = [self locationInView:self.view];
-    [super touchesBegan:touches withEvent:event];
-}
-
-- (void)reset
-{
-    self.event = nil;
-    [super reset];
-}
-
-@end
+//@interface SWPanGestureRecognizer : UIPanGestureRecognizer
+//
+//@property (nonatomic,strong,readonly) UIEvent *event;
+//@property (nonatomic,readonly) CGPoint beginLocation;
+//
+//@end
+//
+//@interface SWPanGestureRecognizer ()
+//
+//@property (nonatomic,strong) UIEvent *event;
+//@property (nonatomic) CGPoint beginLocation;
+//
+//@end
+//
+//@implementation SWPanGestureRecognizer
+//
+//- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//    self.event = event;
+//    self.beginLocation = [self locationInView:self.view];
+//    [super touchesBegan:touches withEvent:event];
+//}
+//
+//- (void)reset
+//{
+//    self.event = nil;
+//    [super reset];
+//}
+//
+//@end
 
 @interface SWMenuController () <UIGestureRecognizerDelegate> {
     //能否向左滑动
@@ -50,11 +50,9 @@
     BOOL _panEnable;
     
     //滑动手势
-    SWPanGestureRecognizer* _panGesture;
+    UIPanGestureRecognizer* _panGesture;
     //点击手势
     UITapGestureRecognizer *_tapGesture;
-    
-    CGPoint _startPanGesturePoint;
 }
 
 //当前显示的是哪个页面状态
@@ -77,7 +75,7 @@
     _rootViewController.view.layer.shadowRadius = 5;
     
     //为MenuController添加滑动手势
-    _panGesture = [[SWPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
+    _panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
     _panGesture.enabled = _panEnable;
     
     _panGesture.delegate = self;
@@ -351,7 +349,6 @@
     
 - (void)panGestureRecognizer:(UIPanGestureRecognizer* )panGesture {
     if (panGesture.state == UIGestureRecognizerStateBegan) {
-        _startPanGesturePoint = [panGesture locationInView:panGesture.view];
     }else if (panGesture.state == UIGestureRecognizerStateChanged) {//每次滑动
         //本次移动的距离
         CGFloat width = [panGesture translationInView:panGesture.view].x;
@@ -381,22 +378,36 @@
         //清空每次移动的距离
         [panGesture setTranslation:CGPointZero inView:panGesture.view];
     }else if (panGesture.state == UIGestureRecognizerStateEnded) {//手势结束
-        
-        CGPoint endPoint = [panGesture locationInView:panGesture.view];
-        
+        //滑动停止的时候，中间页面的x坐标
+        CGFloat x = _rootViewController.view.frame.origin.x;
         //终点
         CGFloat end = 0.0f;
         //移动到终点需要多远的距离
         CGFloat scale = 0.0f;
         
+        //x轴滑动速度
+        CGFloat xVelocity = [panGesture velocityInView:panGesture.view].x;
         switch (_state) {
             case SWMenuControllerStateNormal:{
                 //显示中间
             }
             break;
             case SWMenuControllerStateLeft:{
+                if(xVelocity>0){//右滑
+                    //判断是否是快速右滑
+                    if(xVelocity>500){
+                        end = _maxRightOffset;
+                        break;
+                    }
+                }else{
+                    //判断是否是快速左滑
+                    if(xVelocity<-500){
+                        self.state = SWMenuControllerStateNormal;
+                        break;
+                    }
+                }
                 //显示的左边
-                if (endPoint.x - _startPanGesturePoint.x < 0) {//显示左边，向右滑动，x为正数
+                if (x < _maxRightOffset / 2) {//显示左边，向右滑动，x为正数
                     //如果最终坐标小于显示距离的一半
                     //就不显示侧边栏
                     
@@ -413,8 +424,21 @@
             }
             break;
             case SWMenuControllerStateRight:{
+                if(xVelocity>0){//右滑
+                    //判断是否是快速右滑
+                    if(xVelocity>500){
+                        self.state = SWMenuControllerStateNormal;
+                        break;
+                    }
+                }else{
+                    //判断是否是快速左滑
+                    if(xVelocity<-500){
+                        end = -_maxLeftOffset;
+                        break;
+                    }
+                }
                 //显示的右边
-                if (endPoint.x - _startPanGesturePoint.x > 0 ) {//显示右边，向左滑动，x为负数
+                if (x > -_maxLeftOffset / 2) {//显示右边，向左滑动，x为负数
                     //如果最终坐标小于显示距离的一半
                     //就不显示侧边栏
                     
@@ -464,30 +488,11 @@
 //    return  YES;
 //}
 
-//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+//- (void)cancelOtherGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 //{
-//    if(gestureRecognizer != _panGesture) return NO;
-//    if(gestureRecognizer.state != UIGestureRecognizerStateBegan) return NO;
-//    if(_panGesture.beginLocation.x < 30) {
-//        [self cancelOtherGestureRecognizer:otherGestureRecognizer];
-//        return YES;
-//    }
-////    if([otherGestureRecognizer.view isKindOfClass:[UIScrollView class]]){
-////        UIScrollView *scrollView = (UIScrollView *)otherGestureRecognizer.view;
-////        scrollView.bounces = YES;
-////        if(scrollView.contentOffset.x<=0){
-////            [self cancelOtherGestureRecognizer:otherGestureRecognizer];
-////            return YES;
-////        }
-////    }
-//    return NO;
+//    NSSet *touchs = [_panGesture.event touchesForGestureRecognizer:otherGestureRecognizer];
+//    [otherGestureRecognizer touchesCancelled:touchs withEvent:_panGesture.event];
 //}
-
-- (void)cancelOtherGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-    NSSet *touchs = [_panGesture.event touchesForGestureRecognizer:otherGestureRecognizer];
-    [otherGestureRecognizer touchesCancelled:touchs withEvent:_panGesture.event];
-}
 
 @end
 
