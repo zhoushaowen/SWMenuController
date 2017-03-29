@@ -39,6 +39,9 @@ typedef NS_ENUM(NSUInteger, SWTransitionStyle) {
 //滑动手势
 @property (nonatomic,strong,readonly) UIPanGestureRecognizer *panGesture;
 
+//是否允许点击手势,默认是YES
+@property (nonatomic) BOOL enableTapGesture;
+
 //动画方式
 @property (nonatomic) SWTransitionStyle transitionStyle;
 
