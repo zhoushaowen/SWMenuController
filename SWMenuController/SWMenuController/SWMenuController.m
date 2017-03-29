@@ -221,7 +221,7 @@
 }
     
 - (void)showRootViewControllerAnimated:(BOOL)animated {
-    _state = SWMenuControllerStateNormal;
+    self.state = SWMenuControllerStateNormal;
     
     [self moveRootViewWithState:_state end:0.0f scale:1.0f animated:animated];
 }
@@ -264,7 +264,7 @@
             //当前没有显示左侧边栏
             
             //那么就显示左侧边栏
-            _state = SWMenuControllerStateLeft;
+            self.state = SWMenuControllerStateLeft;
             
             //隐藏右边，显示左边
             _leftViewController.view.hidden = NO;
@@ -281,7 +281,7 @@
             //当前没有显示右侧边栏
             
             //那么就显示右侧边栏
-            _state = SWMenuControllerStateRight;
+            self.state = SWMenuControllerStateRight;
             
             //隐藏左边，显示右边
             _leftViewController.view.hidden = YES;
@@ -400,7 +400,7 @@
                     //如果最终坐标小于显示距离的一半
                     //就不显示侧边栏
                     
-                    _state = SWMenuControllerStateNormal;
+                    self.state = SWMenuControllerStateNormal;
                     
                     //返回原点，终点即原点
                     //                    scale = x / _maxRightOffset;//移动回原点的距离 / 总长度
@@ -418,7 +418,7 @@
                     //如果最终坐标小于显示距离的一半
                     //就不显示侧边栏
                     
-                    _state = SWMenuControllerStateNormal;
+                    self.state = SWMenuControllerStateNormal;
                     
                     //返回原点，终点即原点
                     //                    scale = -x / _maxLeftOffset;//移动到原点的距离 / 总长度
